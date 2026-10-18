@@ -1,52 +1,463 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <title>Entrainement Verbes Irrégulier Anglais</title>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <h1>Bienvenue sur ce site qui vous permetera d'apprendre les Verbes Irrégulier en Anglais !</h1>
-        <h3>Le fonctionnment est simple :</h3>
-        <p>1 : Téléchargez <a href="document/fiche.pdf" download>la fiche</a> pour apprendre les Verbes Irréguliers.</p>
-        <p>2 : Une fois que vous les avez apris, selectionner une ou plusieurs catégories et répondez correctement au questions posées !</p>
-        <p>3 : Une fois que avez tout réussi à la perfection, vous avez fini ! Vous n'aurez plus jamais de problème avec ça !</p>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101010">
+  <title>Verbes irréguliers — Révision</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101010;
+      --line: #303030;
+      --red: #ff5a5f;
+      --muted: #aaa;
+      --green: #65d49a;
+    }
 
-        <div class="question" id="question1">
-            <h3>Trouvez le bon verbe :</h3>
+    * {
+      box-sizing: border-box;
+    }
 
-            <p>Participe passé du verbe Faire</p>
-            <label for="verbes1">Choisissez le bon verbe</label>
-            <div class="choix">
-                <select id="verbes1" name="verbes">
-                    <option value="was/were">Was/were</option>
-                    <option value="done">Done</option>
-                    <option value="did">Did</option>
-                </select>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(ellipse at 50% -15%, #392023 0, transparent 48%), var(--bg);
+      color: #f7f7f7;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      padding: calc(24px + env(safe-area-inset-top)) 18px calc(28px + env(safe-area-inset-bottom));
+    }
 
-                <button id="verifier1" type="button">Valider</button>
+    main {
+      width: min(100%, 520px);
+      margin: 0 auto;
+    }
 
-                <p id="reponse1"></p>
-            </div>
+    header {
+      margin: 10px 2px 26px;
+    }
+
+    .eyebrow {
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 8px 0 5px;
+      font-size: clamp(28px, 8vw, 38px);
+      letter-spacing: -.04em;
+    }
+
+    header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .stats {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0 2px 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .score {
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .track {
+      height: 5px;
+      background: #292929;
+      border-radius: 9px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0;
+      background: var(--red);
+      border-radius: 9px;
+      transition: width .25s;
+    }
+
+    .card {
+      background: linear-gradient(150deg, #202020, #181818);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 23px 20px 20px;
+      box-shadow: 0 18px 50px #0005;
+    }
+
+    .tag {
+      display: inline-flex;
+      background: #302022;
+      color: #ff9b9f;
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .prompt-label {
+      margin: 23px 0 5px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .prompt {
+      min-height: 48px;
+      margin: 0 0 22px;
+      font-size: clamp(30px, 9vw, 42px);
+      line-height: 1.15;
+      letter-spacing: -.04em;
+      font-weight: 750;
+      overflow-wrap: anywhere;
+    }
+
+    label {
+      display: block;
+      color: #c5c5c5;
+      font-size: 13px;
+      margin: 0 0 8px;
+    }
+
+    input {
+      width: 100%;
+      min-height: 56px;
+      background: #111;
+      color: #fff;
+      border: 1px solid #444;
+      border-radius: 14px;
+      padding: 0 15px;
+      font: inherit;
+      font-size: 18px;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    input:focus {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px #ff5a5f25;
+    }
+
+    input:disabled {
+      opacity: .8;
+    }
+
+    .feedback {
+      min-height: 23px;
+      margin: 12px 2px 0;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .feedback.good {
+      color: var(--green);
+    }
+
+    .feedback.bad {
+      color: #ff8589;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 13px;
+    }
+
+    button {
+      min-height: 52px;
+      border: 0;
+      border-radius: 15px;
+      font: inherit;
+      font-size: 15px;
+      font-weight: 750;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:active {
+      transform: scale(.98);
+    }
+
+    .primary {
+      background: var(--red);
+      color: #190d0e;
+    }
+
+    .secondary {
+      background: #2a2a2a;
+      color: #fff;
+      border: 1px solid #404040;
+    }
+
+    .hint {
+      margin: 16px 3px 0;
+      color: #777;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .restart {
+      display: block;
+      margin: 18px auto 0;
+      padding: 9px 12px;
+      min-height: auto;
+      background: transparent;
+      color: #aaa;
+      font-size: 13px;
+    }
+
+    @media (max-width: 360px) {
+      body {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .card {
+        padding: 20px 16px 17px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="eyebrow">Mode révision</div>
+      <h1>Verbes irréguliers</h1>
+      <p>Une question au hasard, à toi de jouer.</p>
+    </header>
+
+    <div class="stats">
+      <span id="round">Question 1</span>
+      <span class="score" id="score">0 bonne réponse</span>
+    </div>
+
+    <div class="track">
+      <div class="fill" id="progress"></div>
+    </div>
+
+    <section class="card" aria-live="polite">
+      <span class="tag" id="category">Traduction</span>
+      <p class="prompt-label" id="label">Traduis en français</p>
+      <p class="prompt" id="prompt">Be</p>
+
+      <form id="form">
+        <label for="answer">Ta réponse</label>
+        <input
+          id="answer"
+          type="text"
+          autocomplete="off"
+          autocapitalize="none"
+          enterkeyhint="go"
+          placeholder="Écris ta réponse…"
+          required
+        >
+
+        <p class="feedback" id="feedback" aria-live="polite"></p>
+
+        <div class="actions">
+          <button class="secondary" id="skip" type="button">Passer</button>
+          <button class="primary" id="submit" type="submit">Vérifier</button>
         </div>
+      </form>
+    </section>
 
-        <div class="question" id="question2" hidden>
-            <h3>Trouve le bon verbe :</h3>
+    <p class="hint">Astuce : appuie sur « Entrée » pour vérifier.</p>
+    <button class="restart" id="restart" type="button">Recommencer la série</button>
+  </main>
 
-            <p>Prétérit de Hit</p>
-            <label for="verbes2">Choisissez le bon verbe</label>
-            <div class="choix">
-                <select id="verbes2" name="verbes">
-                    <option value="hit">Hit</option>
-                    <option value="be">Be</option>
-                    <option value="did">Did</option>
-                </select>
+  <script>
+    const verbs = [
+      {base:'be',past:'was/were',participle:'been',translation:'être'},
+      {base:'have',past:'had',participle:'had',translation:'avoir'},
+      {base:'go',past:'went',participle:'gone',translation:'aller'},
+      {base:'do',past:'did',participle:'done',translation:'faire'},
+      {base:'make',past:'made',participle:'made',translation:'fabriquer'},
+      {base:'get',past:'got',participle:'got',translation:'obtenir/avoir'},
+      {base:'cut',past:'cut',participle:'cut',translation:'couper'},
+      {base:'bet',past:'bet',participle:'bet',translation:'parier'},
+      {base:'let',past:'let',participle:'let',translation:'laisser'},
+      {base:'hurt',past:'hurt',participle:'hurt',translation:'blesser'},
+      {base:'put',past:'put',participle:'put',translation:'mettre'},
+      {base:'shut',past:'shut',participle:'shut',translation:'fermer'},
+      {base:'burst',past:'burst',participle:'burst',translation:'éclater'},
+      {base:'hit',past:'hit',participle:'hit',translation:'frapper'},
+      {base:'cost',past:'cost',participle:'cost',translation:'coûter'},
+      {base:'spread',past:'spread',participle:'spread',translation:'étaler'},
+      {base:'read [i:]',past:'read [e]',participle:'read [e]',translation:'lire'},
+      {base:'quit',past:'quit',participle:'quit',translation:'abandonner'}
+    ];
 
-                <button id="verifier2" type="button">Valider</button>
+    const fields = [
+      {
+        key:'base',
+        name:'Base verbale',
+        question:'Trouve la base verbale de'
+      },
+      {
+        key:'past',
+        name:'Prétérit',
+        question:'Trouve le prétérit de'
+      },
+      {
+        key:'participle',
+        name:'Participe passé',
+        question:'Trouve le participe passé de'
+      },
+      {
+        key:'translation',
+        name:'Traduction',
+        question:'Traduis en français'
+      }
+    ];
 
-                <p id="reponse2"></p>
-            </div>
-        </div>
-        <script src="script.js"></script>
-    </body>
+    const $ = id => document.getElementById(id);
+
+    let current;
+    let asked = new Set();
+    let count = 0;
+    let correct = 0;
+    let locked = false;
+
+    function normalize(text) {
+      return text
+        .toLocaleLowerCase('fr')
+        .trim()
+        .replace(/[’']/g, "'")
+        .replace(/\s*\/\s*/g, '/')
+        .replace(/\s+/g, ' ');
+    }
+
+    function next() {
+      // Quand toutes les questions ont été posées, on relance une nouvelle série.
+      if (asked.size === verbs.length * fields.length) {
+        asked.clear();
+      }
+
+      const options = [];
+
+      verbs.forEach((verb, verbIndex) => {
+        fields.forEach((field, fieldIndex) => {
+          const id = verbIndex + ':' + fieldIndex;
+
+          if (!asked.has(id)) {
+            options.push({verb, field, id});
+          }
+        });
+      });
+
+      current = options[Math.floor(Math.random() * options.length)];
+      asked.add(current.id);
+      locked = false;
+
+      $('category').textContent = current.field.name;
+      $('label').textContent = current.field.question;
+
+      // La traduction n'est demandée qu'à partir de la base anglaise.
+      if (current.field.key === 'translation') {
+        $('prompt').textContent = current.verb.base;
+      } else {
+        $('prompt').textContent = '« ' + current.verb.translation + ' »';
+      }
+
+      $('answer').value = '';
+      $('answer').disabled = false;
+      $('submit').textContent = 'Vérifier';
+      $('skip').textContent = 'Passer';
+
+      $('feedback').textContent = '';
+      $('feedback').className = 'feedback';
+
+      $('round').textContent = 'Question ' + (count + 1);
+      $('score').textContent =
+        correct + ' bonne réponse' + (correct === 1 ? '' : 's');
+
+      $('progress').style.width =
+        (asked.size / (verbs.length * fields.length) * 100) + '%';
+
+      $('answer').focus({preventScroll: true});
+    }
+
+    function check() {
+      if (locked) {
+        next();
+        return;
+      }
+
+      const value = normalize($('answer').value);
+
+      if (!value) {
+        return;
+      }
+
+      const answer = current.verb[current.field.key];
+      const expected = normalize(answer);
+
+      // Accepte la réponse complète (« was/were ») et chaque variante seule.
+      const accepted = [
+        expected,
+        ...answer.split('/').map(normalize)
+      ];
+
+      const isCorrect = accepted.includes(value);
+      count++;
+
+      if (isCorrect) {
+        correct++;
+      }
+
+      locked = true;
+      $('answer').disabled = true;
+      $('submit').textContent = 'Continuer';
+      $('skip').textContent = 'Suivant';
+
+      if (isCorrect) {
+        $('feedback').textContent = '✓ Exact !';
+        $('feedback').className = 'feedback good';
+      } else {
+        $('feedback').textContent = 'Réponse : ' + answer;
+        $('feedback').className = 'feedback bad';
+      }
+
+      $('score').textContent =
+        correct + ' bonne réponse' + (correct === 1 ? '' : 's');
+
+      $('round').textContent = 'Question ' + count;
+    }
+
+    $('form').addEventListener('submit', event => {
+      event.preventDefault();
+      check();
+    });
+
+    $('skip').addEventListener('click', () => {
+      if (locked) {
+        next();
+        return;
+      }
+
+      count++;
+      next();
+    });
+
+    $('restart').addEventListener('click', () => {
+      asked.clear();
+      count = 0;
+      correct = 0;
+      next();
+    });
+
+    next();
+  </script>
+</body>
 </html>
