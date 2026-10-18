@@ -257,7 +257,10 @@
           id="answer"
           type="text"
           autocomplete="off"
-          autocapitalize="none"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          data-form-type="other"
           enterkeyhint="go"
           placeholder="Écris ta réponse…"
           required
@@ -339,7 +342,6 @@
     }
 
     function next() {
-      // Quand toutes les questions ont été posées, on relance une nouvelle série.
       if (asked.size === verbs.length * fields.length) {
         asked.clear();
       }
@@ -363,7 +365,8 @@
       $('category').textContent = current.field.name;
       $('label').textContent = current.field.question;
 
-      // La traduction n'est demandée qu'à partir de la base anglaise.
+      // Pour la traduction, on montre la base anglaise.
+      // Pour les autres questions, on montre le verbe en français.
       if (current.field.key === 'translation') {
         $('prompt').textContent = current.verb.base;
       } else {
@@ -403,7 +406,7 @@
       const answer = current.verb[current.field.key];
       const expected = normalize(answer);
 
-      // Accepte la réponse complète (« was/were ») et chaque variante seule.
+      // Accepte la réponse complète (« was/were ») et les formes seules (« was » ou « were »).
       const accepted = [
         expected,
         ...answer.split('/').map(normalize)
